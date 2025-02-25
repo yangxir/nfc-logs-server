@@ -22,6 +22,15 @@ def init_db():
 
 init_db()
 
+
+# 新增根路由
+@app.route("/")
+def home():
+    return """
+    <h1>NFC 日志服务</h1>
+    <p>访问 <a href="/view_logs">/view_logs</a> 查看日志</p>
+    """
+
 # 记录 NFC 访问日志
 @app.route("/log_nfc", methods=["POST"])
 def log_nfc():
@@ -54,5 +63,8 @@ def view_logs():
     return html
 
 if __name__ == "__main__":
+        # 确保PORT读取方式兼容云环境
     port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    # 使用生产级服务器 (需在requirements.txt添加gunicorn)
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=port)
